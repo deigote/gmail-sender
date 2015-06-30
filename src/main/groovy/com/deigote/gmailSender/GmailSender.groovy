@@ -19,18 +19,22 @@ class GmailSender {
 	}
 
 	private void generateAndSendEmail(
-		String username, String password, String to, String subject, String body
+		String username, String password, String commaSeparatedAddressees, String subject, String body
 	) {
 		Session session = Session.getDefaultInstance(mailServerProperties, null)
 		sendMessage(
 			session, username, password,
-			buildEmailMessage(session, to, subject, body)
+			buildEmailMessage(session, commaSeparatedAddressees.tokenize(','), subject, body)
 		)
 	}
 
-	private MimeMessage buildEmailMessage(Session session, String to, String subject, String body) {
+	private MimeMessage buildEmailMessage(
+		Session session, Collection<String> addressees, String subject, String body
+	) {
 		MimeMessage message = new MimeMessage(session)
-		message.addRecipient(Message.RecipientType.TO, new InternetAddress(to))
+		addressees.each { addressee ->
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(addressee))
+		}
 		message.setSubject(subject)
 		message.setContent(body, "text/html");
 		return message
