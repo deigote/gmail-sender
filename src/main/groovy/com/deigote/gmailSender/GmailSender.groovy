@@ -21,7 +21,6 @@ class GmailSender {
 	private void generateAndSendEmail(
 		String username, String password, String to, String subject, String body
 	) {
-		println "Sending message with credentials $username $password"
 		Session session = Session.getDefaultInstance(mailServerProperties, null)
 		sendMessage(
 			session, username, password,
