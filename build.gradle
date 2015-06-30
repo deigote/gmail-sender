@@ -9,3 +9,16 @@ dependencies {
 	compile 'javax.mail:mail:1.4.7'
 	compile 'javax.mail:javax.mail-api:1.5.4'
 }
+
+task(sendMail, dependsOn: 'classes', type: JavaExec) {
+	main = 'com.deigote.gmailSender.GmailSender'
+	classpath = sourceSets.main.runtimeClasspath
+
+	def requiredArguments = ['username', 'password', 'to', 'subject', 'body']
+	args = requiredArguments.collectEntries { requiredArgument ->
+		[(requiredArgument): project.properties[requiredArgument]]
+	}.each { argName, argValue ->
+		assert argValue, "Argument <${argName}> missing! Usage: ./gradlew sendMail " + requiredArguments.collect { "-P${it}=${it}Value" }.join(' ')
+	}.values().sort { requiredArguments.indexOf(it) }
+}
+
