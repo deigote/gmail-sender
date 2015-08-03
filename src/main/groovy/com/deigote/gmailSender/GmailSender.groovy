@@ -14,11 +14,13 @@ class GmailSender {
 	private static final Properties mailServerProperties = buildSmtpProperties()
 
 	public static void main(String[] args) {
-		assert args.findAll { it }.size() == 5, 'Wrong number of arguments! Please provide: <username> <password> <to> <subject> <body>'
+		String usageMessage = System.getProperty('usage.message')
+		assert args.size() == 5, "Wrong number of arguments! ${usageMessage}"
+		assert args.every(), "Argument missing! ${usageMessage}"
 		getInstance().generateAndSendEmail(*args)
 	}
 
-	private void generateAndSendEmail(
+	void generateAndSendEmail(
 		String username, String password, String commaSeparatedAddressees, String subject, String body
 	) {
 		Session session = Session.getDefaultInstance(mailServerProperties, null)

@@ -15,10 +15,10 @@ task(sendMail, dependsOn: 'classes', type: JavaExec) {
 	classpath = sourceSets.main.runtimeClasspath
 
 	def requiredArguments = ['username', 'password', 'to', 'subject', 'body']
+
+	systemProperty 'usage.message', 'Usage: ./gradlew sendMail ' + requiredArguments.collect { "-P${it}=${it}Value" }.join(' ')
 	args = requiredArguments.collectEntries { requiredArgument ->
-		[(requiredArgument): project.properties[requiredArgument]]
-	}.each { argName, argValue ->
-		assert argValue, "Argument <${argName}> missing! Usage: ./gradlew sendMail " + requiredArguments.collect { "-P${it}=${it}Value" }.join(' ')
-	}.values().sort { requiredArguments.indexOf(it) }
+		[(requiredArgument): project.properties[requiredArgument] ?: '']
+	}.sort { requiredArguments.indexOf(it.key) }.values()
 }
 
